@@ -11,7 +11,7 @@ github_repo: "https://github.com/keyonhome/keyonhome.github.io.git" # you code r
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "使我有洛阳二顷田，安能配六国相印"
+sidebar-about-description: "诗是对现实的求导，梦是对理想的积分"
 sidebar-avatar: /img/img_me.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
