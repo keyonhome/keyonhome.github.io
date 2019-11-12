@@ -26,8 +26,8 @@ Like the FSM diagram shown, I separate the entire flow into 4 stages: IDLE, load
 When the start button been pressed firstly, machine convert state from IDLE to loading state, the counter start to load the initial value and read inputs from switches.
 As operator realise the button, the FPGA detect the negative edge of signal, and controller is turn into running stage. The counter start to counter down and reload while each digit overflow until the BCD outputs all approach to zero.
 When all digitals display as zeros ,state machine goes to alert stage ,hold value and set alert to high active. By the way, the Rst signal can reset the state into idle from any states.
- '''
- module controller (clk,start,zero,load,run,alert,rst);//this clk  need aligin 
+
+ '''module controller (clk,start,zero,load,run,alert,rst);//this clk  need aligin 
 input start,zero,rst,clk;
 output reg load,run,alert;
 reg [3:0] nextstate,currentstate;
@@ -114,8 +114,7 @@ always@(currentstate or alert)
 				        end
 			endcase	
     end
-endmodule	
-'''
+endmodule'''
 
 ##Counter down module
 
