@@ -48,9 +48,9 @@ always@(posedge clk or posedge rst)
 		
 always@(*)
 	begin
-	case(currentstate)
+	case(currentstate)'''
 	
-	idle:begin
+	'''idle:begin
 		if(start==1'b1)
 		nextstate <= loading;
 		else
