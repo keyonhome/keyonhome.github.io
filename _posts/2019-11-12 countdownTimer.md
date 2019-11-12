@@ -19,7 +19,7 @@ RTL design ( RTL diagram attached as appendix1)
 When design the RTL diagram of “countdown Timer” ,I decide to divide it as basically two sub blocks. One of the block is to implement control logic and the other one is to process counter down function.(FSM diagram attached as appendix 2).
  I am in charge of the design and Verification. So here I am going to introduce the whole of design and verification flows.
 
-##Controller module
+#Controller module
  ![avatar](/img/controller.png)
  
 Like the FSM diagram shown, I separate the entire flow into 4 stages: IDLE, loading, running, and alert state.
@@ -118,7 +118,7 @@ always@(currentstate or alert)
 endmodule
 
 *********************************************************************************************************************8***
-##Counter down module
+#Counter down module
 
 When design the countdown module , firstly we generate the 1ms clock using a flip-flop.
  Then I found the rest of structures share a high similarity. So it would be simple to make a general block and instantiate when we need it in different forms.
@@ -236,7 +236,7 @@ endmodule
 
 
 ***********************************************************************************************************************************
-##Verification & Debug
+#Verification & Debug
   
 When design the testbench, it is better to set a shorter interval of clock pulse ,so that we could  see the result in a proper time scale. Unlike other assignment , here we have multiple modules and better to have different testbench for different modules.
 After go through all the testbench’s results ,there are some problems we met.
@@ -252,6 +252,6 @@ Here we can’t just take the condition that output of each flip- flop equals ze
 Testbench diagram
  
  
-##Integration
+#Integration
 After successfully complete the main function blocks ,rest need to be done is integration the display module which was designed and verified last lab  with the top module of countdown timer .Then add the constraint file and test on hardware.
 As we can see the picture below the CPLD resource we used main focus on X0Y1 andX1Y1 area. And we could also see the I/O resource we used. 
