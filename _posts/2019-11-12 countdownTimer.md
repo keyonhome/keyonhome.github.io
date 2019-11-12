@@ -27,7 +27,8 @@ When the start button been pressed firstly, machine convert state from IDLE to l
 As operator realise the button, the FPGA detect the negative edge of signal, and controller is turn into running stage. The counter start to counter down and reload while each digit overflow until the BCD outputs all approach to zero.
 When all digitals display as zeros ,state machine goes to alert stage ,hold value and set alert to high active. By the way, the Rst signal can reset the state into idle from any states.
 
- '''module controller (clk,start,zero,load,run,alert,rst);//this clk  need aligin 
+*************************************************************************************************
+module controller (clk,start,zero,load,run,alert,rst);//this clk  need aligin 
 input start,zero,rst,clk;
 output reg load,run,alert;
 reg [3:0] nextstate,currentstate;
@@ -48,9 +49,9 @@ always@(posedge clk or posedge rst)
 		
 always@(*)
 	begin
-	case(currentstate)'''
+	case(currentstate)
 	
-	'''idle:begin
+	idle:begin
 		if(start==1'b1)
 		nextstate <= loading;
 		else
@@ -114,8 +115,9 @@ always@(currentstate or alert)
 				        end
 			endcase	
     end
-endmodule'''
+endmodule
 
+*********************************************************************************************************************8***
 ##Counter down module
 
 When design the countdown module , firstly we generate the 1ms clock using a flip-flop.
@@ -135,7 +137,105 @@ The multiplexer use 4 branches to realise the functions :
 4.	Load the value of “ sw” signal when load signal is set active high.
 
 The overall block shown as below:
- 
+**************************************************************************************************************************
+ module counterdown(clock,reset,start,timeBCD,sw,alert);
+input clock,reset,start;
+input [11:0] sw;
+output [15:0] timeBCD;
+output alert;
+wire  zero;
+wire load,run;
+wire [3:0] ffotp1,ffotp2,ffotp3,ffotp4;
+reg [18:0] cnt;
+wire ovw0,ovw1,ovw2,ovw3,ovw4;
+parameter reload1=4'b1001,reload2=4'b1001,reload3=4'b0101,reload4=4'b1001;
+
+// the first counter block- function: clk generator 
+	always@(posedge clock)//synchronous withoout rst
+		begin
+			if ((reset == 1'b1) ||(start==1'b1))
+				cnt <= 19'b0;
+			
+			else
+				cnt <= cnt +19'b1;
+					
+			if(cnt==19'd500000) 
+			cnt <= 19'b0;
+				
+             end
+		
+assign ovw0 = (cnt == 19'd500000);//b1111010000100100000);1ms 
+	//to judge the counter peroid
+assign ovw1 = ((timeBCD[3:0]==4'b0000)  && (ovw0 ==1'b1));//initial problems avoid ovw when first start
+assign ovw2 = ((timeBCD[7:4]==4'b0000)  && (ovw1==1'b1)) ;
+assign ovw3 = ((timeBCD[11:8]==4'b0000)  && (ovw2 ==1'b1));
+assign ovw4 = ((timeBCD[15:12]==4'b0000)  && (ovw3==1'b1)) ;	
+//detect the ovw of each ff1
+assign zero = ((timeBCD[15:0]==15'b0) && (ovw0==1'b1));// avoid initial problem
+// detect the zero value
+controller control (.clk(clock),.start(start),.zero(zero),.load(load),.run(run),.alert(alert),.rst(reset));
+
+ffmux ff1(.clk(clock),.rst(reset),.load(load),.run(run),.ovwp(ovw0),.ovw(ovw1),.reload(reload1),.sw(4'b1001),.ffotp(timeBCD[3:0]));
+ffmux ff2(.clk(clock),.rst(reset),.load(load),.run(run),.ovwp(ovw1),.ovw(ovw2),.reload(reload2),.sw(sw[3:0]),.ffotp(timeBCD[7:4]));
+ffmux ff3(.clk(clock),.rst(reset),.load(load),.run(run),.ovwp(ovw2),.ovw(ovw3),.reload(reload3),.sw(sw[7:4]),.ffotp(timeBCD[11:8]));
+ffmux ff4(.clk(clock),.rst(reset),.load(load),.run(run),.ovwp(ovw3),.ovw(ovw4),.reload(reload4),.sw(sw[11:8]),.ffotp(timeBCD[15:12]));
+
+
+
+
+
+endmodule
+
+
+***************************************************************************************************************************8*
+module ffmux (clk,rst,load,run,ovwp,ovw,reload,sw,ffotp);
+input run,load,ovw,ovwp,clk,rst;
+input[3:0]reload,sw;
+output reg [3:0] ffotp;
+reg [3:0] muxotp;
+wire[3:0] controllor;
+
+assign controllor = {load,run,ovwp,ovw};
+
+always@(posedge clk)
+begin
+if(rst==1'b1)
+	ffotp <= 4'b0000;
+else 
+	ffotp <= muxotp;
+end
+
+
+always@(*)
+begin
+ casez(controllor)
+//mins1 
+4'b0110:begin
+		muxotp <= ffotp - 1'b1;
+		end
+
+//hold vlaue
+4'b0100:begin
+		muxotp <= ffotp;
+		end
+		
+//relaod after ovw
+4'b01?1:begin
+		muxotp <= reload;
+		end
+		
+//load value
+4'b1???:begin
+		muxotp  <= sw;
+		end
+
+default:muxotp<= 4'b0000;
+endcase
+end
+endmodule
+
+
+***********************************************************************************************************************************
 ##Verification & Debug
   
 When design the testbench, it is better to set a shorter interval of clock pulse ,so that we could  see the result in a proper time scale. Unlike other assignment , here we have multiple modules and better to have different testbench for different modules.
