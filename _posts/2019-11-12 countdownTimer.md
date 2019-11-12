@@ -26,8 +26,8 @@ Like the FSM diagram shown, I separate the entire flow into 4 stages: IDLE, load
 When the start button been pressed firstly, machine convert state from IDLE to loading state, the counter start to load the initial value and read inputs from switches.
 As operator realise the button, the FPGA detect the negative edge of signal, and controller is turn into running stage. The counter start to counter down and reload while each digit overflow until the BCD outputs all approach to zero.
 When all digitals display as zeros ,state machine goes to alert stage ,hold value and set alert to high active. By the way, the Rst signal can reset the state into idle from any states.
-
-*************************************************************************************************
+**Verilog code attach：**
+************************************************************************************************************************************
 module controller (clk,start,zero,load,run,alert,rst);//this clk  need aligin 
 input start,zero,rst,clk;
 output reg load,run,alert;
@@ -137,7 +137,7 @@ The multiplexer use 4 branches to realise the functions :
 4.	Load the value of “ sw” signal when load signal is set active high.
 
 The overall block shown as below:
-**************************************************************************************************************************
+************************************************************************************************************************************
  module counterdown(clock,reset,start,timeBCD,sw,alert);
 input clock,reset,start;
 input [11:0] sw;
@@ -187,7 +187,7 @@ ffmux ff4(.clk(clock),.rst(reset),.load(load),.run(run),.ovwp(ovw3),.ovw(ovw4),.
 endmodule
 
 
-***************************************************************************************************************************8*
+************************************************************************************************************************************
 module ffmux (clk,rst,load,run,ovwp,ovw,reload,sw,ffotp);
 input run,load,ovw,ovwp,clk,rst;
 input[3:0]reload,sw;
