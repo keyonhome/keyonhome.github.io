@@ -249,8 +249,6 @@ Here we can’t just take the condition that output of each flip- flop equals ze
 
 3.	 Here we use 9 second as se input just for example，and I have also tested others value like（9mins.）and convert of state machine which work successfully shown as below. 
 
-Testbench diagram
- 
  
 **Integration**
 After successfully complete the main function blocks ,rest need to be done is integration the display module which was designed and verified last lab  with the top module of countdown timer .Then add the constraint file and test on hardware.
